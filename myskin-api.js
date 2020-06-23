@@ -136,14 +136,14 @@ app.post("/questions", (req, res) => {
 });
 
 app.post("/answers", (req, res) => {
-  const question = req.body.question;
+  const answer = req.body.answer;
   const question_id = req.body.question_id;
 
   connection_id.then((connection) => {
     connection
       .query(
         "INSERT INTO answers (user_id, question_id, answer, creation_date) VALUES (?, ?, ?, CURRENT_TIMESTAMP)",
-        [user_id, question_id, question]
+        [user_id, question_id, answer]
       )
       .then((status) => res.json(status))
       .catch(console.log);
