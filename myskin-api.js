@@ -90,7 +90,7 @@ app.get("/questions", (req, res) => {
   connection_id.then((connection) => {
     connection
       .query(
-        "SELECT q.id, q.user_id, q.subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast FROM questions q, users u WHERE u.id=q.user_id Limit " +
+        "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast FROM questions q, users u WHERE u.id=q.user_id ORDER BY q.id DESC Limit " +
           start_index +
           "," +
           number_of_entries
@@ -110,7 +110,7 @@ app.get("/questions/search/:keyword", (req, res) => {
   connection_id.then((connection) => {
     connection
       .query(
-        "SELECT q.id, q.user_id, q.subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast FROM questions q, users u WHERE (LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?)) AND u.id=q.user_id Limit " +
+        "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast FROM questions q, users u WHERE (LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?)) AND u.id=q.user_id ORDER BY q.id DESC Limit " +
           start_index +
           "," +
           number_of_entries,
@@ -208,7 +208,7 @@ app.get("/favorites", (req, res) => {
   connection_id.then((connection) => {
     connection
       .query(
-        "SELECT q.id, q.user_id, q.subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast FROM questions q, users u, favorites f WHERE f.user_id=? AND f.question_id=q.id AND q.user_id=u.id Limit " +
+        "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast FROM questions q, users u, favorites f WHERE f.user_id=? AND f.question_id=q.id AND q.user_id=u.id ORDER BY q.id DESC Limit " +
           start_index +
           "," +
           number_of_entries,
