@@ -90,7 +90,7 @@ app.get("/questions", (req, res) => {
   connection_id.then((connection) => {
     connection
       .query(
-        "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast FROM questions q, users u WHERE u.id=q.user_id ORDER BY q.id DESC Limit " +
+        "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast, count(a.id) AS num FROM questions q  LEFT JOIN answers a ON (a.question_id=q.id) LEFT JOIN users u ON (u.id=q.user_id) GROUP BY q.id ORDER BY q.id DESC Limit " +
           start_index +
           "," +
           number_of_entries
@@ -110,7 +110,7 @@ app.get("/questions/search/:keyword", (req, res) => {
   connection_id.then((connection) => {
     connection
       .query(
-        "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast FROM questions q, users u WHERE (LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?)) AND u.id=q.user_id ORDER BY q.id DESC Limit " +
+        "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast, count(a.id) AS num FROM questions q  LEFT JOIN answers a ON (a.question_id=q.id) LEFT JOIN users u ON (u.id=q.user_id) WHERE (LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?)) AND u.id=q.user_id GROUP BY q.id ORDER BY q.id DESC Limit " +
           start_index +
           "," +
           number_of_entries,
@@ -208,7 +208,7 @@ app.get("/favorites", (req, res) => {
   connection_id.then((connection) => {
     connection
       .query(
-        "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast FROM questions q, users u, favorites f WHERE f.user_id=? AND f.question_id=q.id AND q.user_id=u.id ORDER BY q.id DESC Limit " +
+        "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast, count(a.id) AS num FROM questions q LEFT JOIN answers a ON (a.question_id=q.id) LEFT JOIN users u ON (u.id=q.user_id) LEFT JOIN favorites f ON (f.question_id=q.id) WHERE f.user_id=? GROUP BY q.id ORDER BY q.id DESC Limit " +
           start_index +
           "," +
           number_of_entries,
