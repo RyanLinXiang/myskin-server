@@ -33,10 +33,10 @@ function validate_token(token, res) {
 app.use(express.static("public"));
 app.use(bodyParser.json());
 
-/* app.get("/", (req, res) => {
+app.get("/", (req, res) => {
   const path = require("path");
-  res.sendFile(path.resolve(__dirname, "public/"));
-}); */
+  res.sendFile(path.resolve(__dirname, "public/model/model.json"));
+});
 
 app.use(function (req, res, next) {
   if (req.path === "/register" || req.path === "/login") next();
