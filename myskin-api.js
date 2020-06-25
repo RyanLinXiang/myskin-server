@@ -30,6 +30,13 @@ function validate_token(token, res) {
   return true;
 }
 
+app.use(express.static("public"));
+
+app.get("/", (req, res) => {
+  const path = require("path");
+  res.sendFile(path.resolve(__dirname, "public/"));
+});
+
 app.use(function (req, res, next) {
   if (req.path === "/register" || req.path === "/login") next();
   else {
