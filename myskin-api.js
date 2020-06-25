@@ -34,7 +34,7 @@ app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   const path = require("path");
-  res.sendFile(path.resolve(__dirname, "model/"));
+  res.sendFile(path.resolve(__dirname, "public/"));
 });
 
 app.use(function (req, res, next) {
