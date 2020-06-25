@@ -35,7 +35,7 @@ app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
   const path = require("path");
-  res.sendFile(path.resolve(__dirname, "public/model/model.json"));
+  res.sendFile(path.resolve(__dirname, "public/index.html"));
 });
 
 app.use(function (req, res, next) {
