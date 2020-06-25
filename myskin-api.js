@@ -31,11 +31,12 @@ function validate_token(token, res) {
 }
 
 app.use(express.static("public"));
+app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
+/* app.get("/", (req, res) => {
   const path = require("path");
   res.sendFile(path.resolve(__dirname, "public/"));
-});
+}); */
 
 app.use(function (req, res, next) {
   if (req.path === "/register" || req.path === "/login") next();
@@ -49,9 +50,6 @@ app.use(function (req, res, next) {
     }
   }
 });
-
-app.use(bodyParser.json());
-app.use(express.static("public"));
 
 app.get("/questions/:question_id", (req, res) => {
   let apiData = [];
