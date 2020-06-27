@@ -112,18 +112,20 @@ app.get("/questions/search/:keyword", (req, res) => {
   const keyword_beginning = keyword + "%";
   const keyword_between = "%" + keyword + "%";
   const keyword_end = "%" + keyword;
-
+  console.log(keyword);
   connection_id.then((connection) => {
     connection
       .query(
         "SELECT q.id, q.user_id, LEFT(q.subject, 100) AS subject, u.user_name, DATEDIFF(CURRENT_TIMESTAMP , q.creation_date) AS dayspast, count(a.id) AS num, count(f.id) AS fav FROM questions q LEFT JOIN answers a ON (a.question_id=q.id) LEFT JOIN users u ON (u.id=q.user_id) LEFT JOIN favorites f ON (f.user_id=? AND f.question_id=q.id) WHERE (LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?) OR LOWER (q.subject) LIKE LOWER (?)) AND u.id=q.user_id GROUP BY q.id ORDER BY q.id DESC Limit " +
           start_index +
           "," +
-          number_of_entries[
-            (keyword_beginning, keyword_between, keyword_end, user_id)
-          ]
+          number_of_entries,
+        [user_id, keyword_beginning, keyword_between, keyword_end]
       )
-      .then((entries) => res.json(entries));
+      .then((entries) => {
+        console.log(entries);
+        return res.json(entries);
+      });
   });
 });
 
