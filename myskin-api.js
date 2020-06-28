@@ -324,7 +324,7 @@ app.post("/register", (req, res) => {
           [user_name, email]
         )
         .then((entry) => {
-          res.json({ len: entry.length });
+          if (entry.num > 0) existing = true;
         });
 
       if (!existing) {
