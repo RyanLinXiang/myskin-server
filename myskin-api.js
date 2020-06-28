@@ -292,8 +292,7 @@ app.post("/login", (req, res) => {
               token,
               user_id: entry[0].id,
               user_name,
-              success:
-                "Registrierung war erfolgreich. Bitte loggen Sie sich nun ein.",
+              success: "Login war erfolgreich",
             });
             res.end("Success");
           } else {
@@ -325,7 +324,7 @@ app.post("/register", (req, res) => {
           [user_name, email]
         )
         .then((entry) => {
-          if (entry.num > 0) existing = true;
+          res.json({ len: entry.length });
         });
 
       if (!existing) {
