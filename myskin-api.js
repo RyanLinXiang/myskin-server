@@ -324,7 +324,7 @@ app.post("/register", (req, res) => {
           [user_name, email]
         )
         .then((entry) => {
-          if (entry.num > 0) existing = true;
+          if (entry[0].num > 0) existing = true;
         });
 
       if (!existing) {
