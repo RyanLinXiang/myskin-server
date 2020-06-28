@@ -65,7 +65,7 @@ app.get("/questions/:question_id", (req, res) => {
       )
 
       .then((entry) => {
-        apiData.push(entry);
+        apiData.push(entry[0]);
         apiData.push([]);
       });
 
