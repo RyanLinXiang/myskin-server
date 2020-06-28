@@ -304,9 +304,9 @@ app.post("/login", (req, res) => {
         .catch(console.log);
     });
   } else {
-    res.statusCode = 401;
+    res.statusCode = 400;
     res.json({ error: "Bitte beide Felder ausfüllen" });
-    res.end("Unauthorized");
+    res.end("Bad Request");
   }
 });
 
@@ -315,43 +315,53 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   const email = req.body.email;
   let existing = false;
+  const emailValidation = function validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+  };
 
   if (user_name && password && email) {
-    connection_id.then(async (myskin) => {
-      await myskin
-        .query(
-          "SELECT COUNT(*) AS num FROM users WHERE user_name=? OR email=?",
-          [user_name, email]
-        )
-        .then((entry) => {
-          if (entry[0].num > 0) existing = true;
-        });
-
-      if (!existing) {
-        myskin
+    if (emailValidation) {
+      connection_id.then(async (myskin) => {
+        await myskin
           .query(
-            "INSERT INTO users (user_name,password,email) VALUES (?,PASSWORD(?),?)",
-            [user_name, password, email]
+            "SELECT COUNT(*) AS num FROM users WHERE user_name=? OR email=?",
+            [user_name, email]
           )
           .then((entry) => {
-            res.statusCode = 200;
-            res.json({
-              success:
-                "Registrierung war erfolgreich. Bitte loggen Sie sich nun ein.",
-            });
-            res.end("Success");
-          })
-          .catch((e) => console.log(e));
-      } else {
-        res.statusCode = 400;
-        res.json({ error: "Username oder E-Mail-Adresse existiert bereits" });
-        res.end("Unauthorized");
-      }
-    });
+            if (entry[0].num > 0) existing = true;
+          });
+
+        if (!existing) {
+          myskin
+            .query(
+              "INSERT INTO users (user_name,password,email) VALUES (?,PASSWORD(?),?)",
+              [user_name, password, email]
+            )
+            .then((entry) => {
+              res.statusCode = 200;
+              res.json({
+                success:
+                  "Registrierung war erfolgreich. Bitte loggen Sie sich nun ein.",
+              });
+              res.end("Success");
+            })
+            .catch((e) => console.log(e));
+        } else {
+          res.statusCode = 400;
+          res.json({ error: "Username oder E-Mail-Adresse existiert bereits" });
+          res.end("Bad Request");
+        }
+      });
+    } else {
+      res.statusCode = 400;
+      res.json({ error: "Bitte überprüfen Sie Ihre E-Mail-Adresse" });
+      res.end("Bad Request");
+    }
   } else {
     res.statusCode = 400;
     res.json({ error: "Bitte alle Felder ausfüllen" });
-    res.end("Unauthorized");
+    res.end("Bad Request");
   }
 });
 
