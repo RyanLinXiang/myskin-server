@@ -270,32 +270,90 @@ app.post("/login", (req, res) => {
   const user_name = req.body.user_name;
   const password = req.body.password;
   let token;
-
-  connection_id.then((connection) => {
-    connection
-      .query(
-        "SELECT id FROM users WHERE user_name=? AND password=PASSWORD(?)",
-        [user_name, password]
-      )
-      .then((entry) => {
-        if (entry.length > 0) {
-          token = jwt.sign(
-            {
+  if (user_name && password) {
+    connection_id.then((connection) => {
+      connection
+        .query(
+          "SELECT id FROM users WHERE user_name=? AND password=PASSWORD(?)",
+          [user_name, password]
+        )
+        .then((entry) => {
+          if (entry.length > 0) {
+            token = jwt.sign(
+              {
+                user_id: entry[0].id,
+                user_name,
+              },
+              process.env.ACCESS_KEY,
+              { expiresIn: "7d" }
+            );
+            res.statusCode = 200;
+            res.json({
+              token,
               user_id: entry[0].id,
               user_name,
-            },
-            process.env.ACCESS_KEY,
-            { expiresIn: "7d" }
-          );
-          res.json({ token, user_id: entry[0].id, user_name });
-        } else {
-          res.statusCode = 401;
-          res.json({ error: "user name and/or password wrong" });
-          res.end("Unauthorized");
-        }
-      })
-      .catch(console.log);
-  });
+              success:
+                "Registrierung war erfolgreich. Bitte loggen Sie sich nun ein.",
+            });
+            res.end("Success");
+          } else {
+            res.statusCode = 401;
+            res.json({ error: "Ihre Zugangsdaten sind fehlerhaft" });
+            res.end("Unauthorized");
+          }
+        })
+        .catch(console.log);
+    });
+  } else {
+    res.statusCode = 401;
+    res.json({ error: "Bitte beide Felder ausfüllen" });
+    res.end("Unauthorized");
+  }
+});
+
+app.post("/register", (req, res) => {
+  const user_name = req.body.user_name;
+  const password = req.body.password;
+  const email = req.body.email;
+  let existing = false;
+
+  if (user_name && password && email) {
+    connection_id.then(async (myskin) => {
+      await myskin
+        .query(
+          "SELECT COUNT(*) AS num FROM users WHERE user_name=? OR email=?",
+          [user_name, email]
+        )
+        .then((entry) => {
+          if (entry.num > 0) existing = true;
+        });
+
+      if (!existing) {
+        myskin
+          .query(
+            "INSERT INTO users (user_name,password,email) VALUES (?,PASSWORD(?),?)",
+            [user_name, password, email]
+          )
+          .then((entry) => {
+            res.statusCode = 200;
+            res.json({
+              success:
+                "Registrierung war erfolgreich. Bitte loggen Sie sich nun ein.",
+            });
+            res.end("Success");
+          })
+          .catch((e) => console.log(e));
+      } else {
+        res.statusCode = 400;
+        res.json({ error: "Username oder E-Mail-Adresse existiert bereits" });
+        res.end("Unauthorized");
+      }
+    });
+  } else {
+    res.statusCode = 400;
+    res.json({ error: "Bitte alle Felder ausfüllen" });
+    res.end("Unauthorized");
+  }
 });
 
 app.listen(port, () => console.log(`Server is running... Port: ${port}`));
