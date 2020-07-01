@@ -196,6 +196,11 @@ app.delete("/questions/:question_id", (req, res) => {
       .query("DELETE FROM questions WHERE id=?", question_id)
       .then((status) => res.json(status))
       .catch(console.log);
+
+    connection
+      .query("DELETE FROM answers WHERE question_id=?", question_id)
+      .then((status) => res.json(status))
+      .catch(console.log);
   });
 });
 
