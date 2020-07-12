@@ -5,10 +5,10 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 let connection_id = mariadb.createConnection({
-  host: "myskin.cyqiccjtkp3p.eu-central-1.rds.amazonaws.com",
-  user: "root",
-  password: "kwaWAChaS91Yuhk1Pk8r",
-  database: "myskin",
+  host: process.env.DBHost,
+  user: process.env.DBUser,
+  password: process.env.DBPassword,
+  database: process.env.DBDatabase,
 });
 
 const app = express();
@@ -106,7 +106,7 @@ app.get("/questions/search/:keyword", (req, res) => {
   const keyword_beginning = keyword + "%";
   const keyword_between = "%" + keyword + "%";
   const keyword_end = "%" + keyword;
-  console.log(keyword);
+
   connection_id.then((connection) => {
     connection
       .query(
