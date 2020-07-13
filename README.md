@@ -9,3 +9,30 @@ Beside the AI part, the app offers many information, real-time UV index, reminde
 Primarily for the discussion forum this REST API back-end was written to allow CRUD actions. Furthermore it also includes basic login/register functionalities based on JWT tokens.
 
 The app is part of the final project of an intense 3-months bootcamp on JavaScript and should not only showcase what has been learned but also what is possbile nowadays with this powerful programming language.
+
+## Getting Started
+
+The database table structure of the discussion forum feature is included in the following file:
+
+```
+structure.sql
+```
+
+
+### Dependencies
+
+```
+package.json
+```
+
+### Installing
+
+```
+npm install
+```
+
+### Executing program
+
+```
+npm start
+```
